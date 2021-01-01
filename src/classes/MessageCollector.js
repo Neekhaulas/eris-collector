@@ -13,6 +13,12 @@ class MessageCollector extends Base {
         this._handleChannelDeletion = this._handleChannelDeletion.bind(this);
         this._handleGuildDeletion = this._handleGuildDeletion.bind(this);
 
+        // Increase max listener on client
+        const maxListeners = client.getMaxListeners();
+        if (maxListeners !== 0) {
+            client.setMaxListeners(maxListeners + 1);
+        }
+
         client.on("messageCreate", this.handleCollect);
         client.on("messageDelete", this.handleDispose);
         client.on("MessageDeleteBulk", bulkDeleteListener);
@@ -25,6 +31,12 @@ class MessageCollector extends Base {
             client.removeListener("MessageDeleteBulk", bulkDeleteListener);
             client.removeListener("channelDelete", this._handleChannelDeletion);
             client.removeListener("guildDelete", this._handleGuildDeletion);
+
+            // Decrease max listener on client
+            const maxListenersEnd = client.getMaxListeners();
+            if (maxListenersEnd !== 0) {
+                client.setMaxListeners(maxListenersEnd - 1);
+            }
         });
     }
 
