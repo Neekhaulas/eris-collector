@@ -47,7 +47,7 @@ class ReactionCollector extends Base {
 
         this.on("remove", (reaction, user) => {
             this.total--;
-            if (!this.collected.some(r => r.users.cache.has(user.id))) this.users.delete(user.id);
+            this.users.delete(user.id);
         });
     }
 
@@ -58,10 +58,10 @@ class ReactionCollector extends Base {
 
     dispose(message, emoji, userID) {
         if (message.id !== this.message.id) return null;
-        if (this.collected.has(ReactionCollector.key(emoji)) && this.users.has(userID)) {
+        if (this.collected.has(ReactionCollector.key(emoji))) {
             this.emit("remove", emoji, userID);
         }
-        return reaction.count ? null : ReactionCollector.key(reaction);
+        return ReactionCollector.key(emoji);
     }
 
     empty() {
