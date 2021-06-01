@@ -12,12 +12,6 @@ class ReactionCollector extends Base {
         this._handleGuildDeletion = this._handleGuildDeletion.bind(this);
         this._handleMessageDeletion = this._handleMessageDeletion.bind(this);
 
-        // Increase max listener on client
-        const maxListeners = client.getMaxListeners();
-        if (maxListeners !== 0) {
-            client.setMaxListeners(maxListeners + 1);
-        }
-
         client.on("messageReactionAdd", this.handleCollect);
         client.on("messageReactionRemove", this.handleDispose);
         client.on("messageReactionRemoveAll", this.empty);
@@ -32,12 +26,6 @@ class ReactionCollector extends Base {
             client.removeListener("messageDelete", this._handleMessageDeletion);
             client.removeListener("channelDelete", this._handleChannelDeletion);
             client.removeListener("guildDelete", this._handleGuildDeletion);
-            
-            // Decrease max listener on client
-            const maxListenersEnd = client.getMaxListeners();
-            if (maxListenersEnd !== 0) {
-                client.setMaxListeners(maxListenersEnd - 1);
-            }
         });
 
         this.on("collect", (reaction, user) => {
